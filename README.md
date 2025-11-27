@@ -17,3 +17,22 @@ This app allows users to add tasks, mark them as completed, delete tasks, and au
 ---
 
 ## 📂 Project Structure
+
+📁 ToDoList
+│── index.html
+│── index.css
+│── script.js
+
+
+---
+
+## 🛠 Technologies Used
+- **HTML5**
+- **CSS3**
+- **JavaScript (Vanilla JS)**
+- **Font Awesome Icons**
+- **LocalStorage API**
+
+---
+
+
