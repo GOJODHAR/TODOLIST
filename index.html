@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO LIST</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://kit.fontawesome.com/354a99ad12.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <h1>My TODO List</h1>
+    <input type="text" id="taskInput" placeholder="Enter a new task">
+    <button id="addTaskButton">Add Task</button>
+    <div id="todo_list"></div>
+    <script>
+
+        // -------------------- LOAD FROM LOCAL STORAGE --------------------
+        document.addEventListener("DOMContentLoaded", function () {
+            loadTasks(); // Load tasks from LocalStorage
+        });
+
+        // -------------------- ADD NEW TASK --------------------
+        document.getElementById("addTaskButton").addEventListener("click", function () {
+            const taskInput = document.getElementById("taskInput");
+            const taskText = taskInput.value.trim();
+
+            if (taskText !== "") {
+                addTaskToDOM(taskText, false);  // add to UI
+                saveTasks();                   // update LocalStorage
+                taskInput.value = "";          // clear input
+            } else {
+                alert("Please enter a task.");
+            }
+        });
+
+        // -------------------- ADD TASK TO UI (DOM) --------------------
+        function addTaskToDOM(taskText, completed) {
+            const todoList = document.getElementById("todo_list");
+
+            const docItem = document.createElement("div");
+            docItem.className = "taskItem";   // IMPORTANT (used for saving)
+
+            const listItem = document.createElement("span");
+            listItem.textContent = taskText;
+
+            if (completed) {
+                listItem.classList.add("completed");
+            }
+
+            // ✔ CHECK MARK (complete)
+            const doneIcon = document.createElement("i");
+            doneIcon.className = "fa-solid fa-check";
+
+            doneIcon.addEventListener("click", function () {
+                completed = !completed;
+
+                if (completed) {
+                    listItem.classList.add("completed");
+                } else {
+                    listItem.classList.remove("completed");
+                }
+                saveTasks();
+            });
+
+            // ✔ DELETE ICON
+            const deleteIcon = document.createElement("i");
+            deleteIcon.className = "fa-solid fa-trash-can";
+
+            deleteIcon.addEventListener("click", function () {
+                docItem.remove();
+                saveTasks();  // update LocalStorage after deletion
+            });
+
+            // Attach icons
+            const iconBox = document.createElement("div");
+
+            iconBox.appendChild(doneIcon);
+            iconBox.appendChild(deleteIcon);
+
+            docItem.appendChild(listItem);
+            docItem.appendChild(iconBox);
+
+            todoList.appendChild(docItem);
+        }
+
+        // -------------------- SAVE ALL TASKS TO LOCAL STORAGE --------------------
+        function saveTasks() {
+            const tasks = [];
+
+            document.querySelectorAll(".taskItem").forEach(item => {
+                const text = item.querySelector("span").textContent;
+                const completed = item.querySelector("span").classList.contains("completed");
+
+                tasks.push({ text, completed });
+            });
+
+            localStorage.setItem("todoLists", JSON.stringify(tasks));
+        }
+
+        // -------------------- LOAD TASKS FROM LOCAL STORAGE --------------------
+        function loadTasks() {
+            const data = localStorage.getItem("todoLists");
+
+            if (!data) return;  // nothing saved yet
+
+            const tasks = JSON.parse(data);
+
+            tasks.forEach(task => {
+                addTaskToDOM(task.text, task.completed);
+            });
+        }
+
+
+    </script>
+
+</body>
+
+</html>
